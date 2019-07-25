@@ -1,8 +1,17 @@
 const bcrypt = require('bcryptjs');
-
+//const session = require("express-session");
 const model = require("./auth-model.js");
 
 function authenticate(req, res, next) {
+  if(req.session && req.session.username) {
+    next();
+  } else {
+    res.status(401).json({message: "bad creds"})
+  }
+}
+module.exports = authenticate;
+//old middleware
+/*
   let password = "";
   let username = "";
   console.log("body", req.body);
@@ -20,6 +29,7 @@ function authenticate(req, res, next) {
   .first()
   .then(user => {
     if(user && bcrypt.compareSync(password, user.password)){
+      req.session.username = user.username;
       next();
     } else {
       res.status(401).json({ message: 'bad credentials' });
@@ -28,6 +38,5 @@ function authenticate(req, res, next) {
   .catch(error => {
     res.status(500).json({error: error.message});
   })
-}
+*/
 
-module.exports = authenticate;
